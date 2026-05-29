@@ -1,0 +1,20 @@
+[Unit]
+Description={{ app_name }} Spring Boot Application
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory={{ app_dir }}
+ExecStart=/usr/bin/java \
+  -jar {{ app_dir }}/{{ app_jar_name }} \
+  --spring.profiles.active={{ spring_profile }} \
+  --spring.config.location={{ app_dir }}/application.properties
+SuccessExitStatus=143
+Restart=on-failure
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier={{ app_name }}
+
+[Install]
+WantedBy=multi-user.target

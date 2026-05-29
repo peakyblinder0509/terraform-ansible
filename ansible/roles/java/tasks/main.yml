@@ -1,0 +1,19 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install Java 17
+  apt:
+    name: openjdk-17-jdk
+    state: present
+
+- name: Verify Java version
+  command: java -version
+  register: java_ver
+  changed_when: false
+
+- name: Show Java version
+  debug:
+    msg: "{{ java_ver.stderr }}"

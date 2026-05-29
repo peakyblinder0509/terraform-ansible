@@ -1,0 +1,53 @@
+---
+- name: Create app directory
+  file:
+    path: "{{ app_dir }}"
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
+- name: Copy Spring Boot JAR to EC2
+  copy:
+    src: "{{ playbook_dir }}/../target/{{ app_jar_name }}"
+    dest: "{{ app_dir }}/{{ app_jar_name }}"
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+  notify: Restart app
+
+- name: Copy application.properties (environment-specific)
+  template:
+    src: application.properties.j2
+    dest: "{{ app_dir }}/application.properties"
+    owner: ubuntu
+    group: ubuntu
+    mode: '0640'
+  notify: Restart app
+
+- name: Create systemd service for Spring Boot app
+  template:
+    src: app.service.j2
+    dest: /etc/systemd/system/{{ app_name }}.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Reload systemd
+    - Restart app
+
+- name: Enable and start app service
+  systemd:
+    name: "{{ app_name }}"
+    enabled: yes
+    state: started
+    daemon_reload: yes
+
+- name: Wait for app to be healthy
+  uri:
+    url: "http://localhost:{{ app_port }}/actuator/health"
+    status_code: 200
+  retries: 10
+  delay: 6
+  register: health
+  until: health.status == 200

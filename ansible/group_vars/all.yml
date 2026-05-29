@@ -1,0 +1,21 @@
+---
+# ── App Config ──
+app_name: flipkart-backend
+app_port: 8080
+app_jar_name: backend.jar
+app_dir: /opt/flipkart
+
+# ── Java ──
+java_version: "17"
+
+# ── NGINX ──
+nginx_server_name: "_"          # Replace with your domain
+backend_port: 8080
+
+# ── Spring Boot Profile ──
+spring_profile: dev
+
+# ── DB Config (use Vault or AWS Secrets Manager in prod) ──
+db_url: "jdbc:postgresql://your-rds-endpoint:5432/flipkartdb"
+db_user: "appuser"
+db_password: "changeme"

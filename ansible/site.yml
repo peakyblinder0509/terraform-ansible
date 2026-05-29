@@ -1,0 +1,18 @@
+---
+# ─────────────────────────────────────────────────────
+# site.yml - Main Ansible Playbook
+# Deploys backend (Spring Boot / Node.js) to EC2
+# Usage: ansible-playbook site.yml -i inventory.ini
+# ─────────────────────────────────────────────────────
+
+- name: Deploy Backend to EC2
+  hosts: backend
+  become: yes
+
+  vars_files:
+    - group_vars/all.yml
+
+  roles:
+    - java          # Install Java 17
+    - nginx         # Install and configure NGINX as reverse proxy
+    - app-deploy    # Deploy the Spring Boot JAR
